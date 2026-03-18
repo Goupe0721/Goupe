@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../GN_style.css">
+    </head>
+    <body>
+        <h1>
+            我用python做了一个博客生成器
+        </h1>
+        <p>
+            <h3>我为什么要做这个？</h3>
+<p>仅使用html编写博文效率低下，每篇文章需要重复编写页面结构，所以我制作了一个博客生成器自动完成这些重复工作，这让我可以将重心放在构思博文上，同时，它可以作为一个可迭代优化的项目，作为学习过程的记录。</p>
+<h3>功能介绍：</h3>
+<p>-遍历content文件夹，试别其中的txt和markdown文件</p>
+<p>-将文件文本转换成html格式</p>
+<p>-将转换后的html写入blog_content下的同名文件</p>
+<h3>核心代码示例：</h3>
+<h6>txt转html部分：</h6>
+<p>from pathlib import Path</p>
+<p>import markdown</p>
+<p>contents = Path("contents")</p>
+<p>blog = Path("blog_contents")</p>
+<p>blog.mkdir(exist_ok=True)</p>
+<p>template = Path("template.html")</p>
+<p>#这里我使用了pathlib来管理文件路径，因为我对它比较熟悉。</p>
+<p>...............................</p>
+<p>for content in contents.iterdir():</p>
+<p>&nbsp;   </p>
+<p>&nbsp;   if content.suffix == ".txt":</p>
+<p>&nbsp;       post_content = content.read_text(encoding="utf-8")</p>
+<p>&nbsp;       html = blog/f"{content.stem}.html"</p>
+<p>&nbsp;       html_content = template_content.replace("{content}",post_content)</p>
+<p>&nbsp;       html_content = html_content.replace("我用python做了一个博客生成器",content.stem)</p>
+<p>&nbsp;       html.write_text(html_content,encoding="utf-8")</p>
+<p>................................</p>
+<h6>我有一点疑惑，replace难道不会改变原模板文件的内容吗？</h6>
+<p>其实并不会，replace作用于字符串，并返回一个新的字符串对象，原始模板文件内容并不会改变。</p>
+<h3>错误回顾：</h3>
+<p>读写文件时没有指定编码格式，导致网页内容变成了乱码。由于不同系统默认编码不同，在读写文件时，显然统一使用encoding="utf-8"更合适。</p>
+<p>html模板中，错误地将博文标题放在了head标签内，导致标题并没有受css影响。需要注意，head标签用于存放页面内的元信息，而显示内容都应在body标签内。</p>
+<h3>未来计划：</h3>
+<p>-优化style.css，改进排版（间距、行距、字体等）。</p>
+<p>-为博文与列表页加入时间戳功能</p>
+        </p>
+        <hr>
+        <p>
+            <a href="../index.html">返回主頁👈</a>
+        </p>
+    </body>
+</html>
