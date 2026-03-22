@@ -1,5 +1,6 @@
 from pathlib import Path
 import markdown
+import datetime
 
 contents = Path("contents")
 blog = Path("blog_contents")
@@ -11,9 +12,13 @@ template_content = template.read_text(encoding="utf-8")
 home = Path("index.html")
 #定位以及創造文件夾
 
-    #此處需要寫入内容
-
 for content in contents.iterdir():
+    if content.suffix in ['.txt','.md']:
+        put_time = content.read_text(encoding='utf-8')
+        if "{{no_time}}" in put_time:
+            time = datetime.date.today().strftime("%Y年%m月%d日")
+            blog_time = put_time.replace("{{no_time}}",time)
+            content.write_text(blog_time,encoding='utf-8')
     
     if content.suffix == ".txt":
         post_content = content.read_text(encoding="utf-8")
@@ -36,3 +41,4 @@ for blog_content in blog.iterdir():
 
 home_content = h_t_content.replace("{blog_list}",blog_list)
 home.write_text(home_content,encoding="utf-8")
+
