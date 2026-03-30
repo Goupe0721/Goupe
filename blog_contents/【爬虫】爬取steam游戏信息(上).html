@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../GN_style.css">
+        <style>
+            h1{
+                text-align:center;
+            }
+            *:not(h1){
+                margin-left:250px;
+                margin-right:250px;
+                margin-top:10px;
+                margin-bottom:20px;
+                color:#00A000;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>
+            【爬虫】爬取steam游戏信息(上)
+        </h1>
+        <p>
+            <h1><strong>序：</strong></h1>
+<p>一款游戏论坛app令gou欲罢不能——它太方便了。</p>
+<p>查游戏信息、看折扣、找同好，它简直是游戏爱好者的天堂......</p>
+<p>直到最近，讨论游戏的贴文越来越少了，取而代之的是散播焦虑与制造对立的内容。</p>
+<p>gou逐渐意识到，他在这些内容上花费的时间，已经远远超过了看游戏内容的时间。</p>
+<p>也许，是时候远离这里了。</p>
+<p>但问题是，app的游戏数据太过齐全，难以割舍。</p>
+<p>最终，在无数次卸载重装后，gou产生了一个想法——</p>
+<p>既然我只需要这些数据，那为什么不<strong>自己做一个数据库</strong>？</p>
+<h1><strong>自己做！</strong></h1>
+<p>gou立刻发表重要讲话：游戏数据库必须要有游戏！</p>
+<p>✍✍✍✍✍</p>
+<p>手机就是苹果！编程语言就是python！数据库就是MongoDB！查询就是XPath！</p>
+<p>✍✍✍✍✍</p>
+<p>宁缺毋滥！字段要精简！</p>
+<ul>
+<li>"name"：游戏名</li>
+<li>"price"：游戏现价</li>
+<li>"original_price"：游戏原价</li>
+</ul>
+<p>✍✍✍✍✍</p>
+<h1><strong>核心代码示例</strong></h1>
+<h2>数据爬取部分：</h2>
+<p>def scrape_game(url):</p>
+<p>&#x20;   logging.info('scraping %s...',url)</p>
+<p>&#x20;   game = {}</p>
+<p>&#x20;   try:</p>
+<p>&#x20;       response = requests.get(url)</p>
+<p>&#x20;       if response.status_code == 200:</p>
+<p>&#x20;           tree = etree.HTML(response.text)</p>
+<p>&#x20;           name = tree.xpath('//span[@itemprop="name"]/text()')</p>
+<p>&#x20;           price = tree.xpath('(//div[@class="discount_final_price"])[1]/text()')</p>
+<p>&#x20;           o_price = tree.xpath('(//div[@class="discount_original_price"])[1]/text()')</p>
+<p>&#x20;           if name:</p>
+<p>&#x20;               game["name"]=name[0]</p>
+<p>&#x20;               if o_price:</p>
+<p>&#x20;                   game["original_price"]=o_price[0]</p>
+<p>&#x20;                   game["price"]=price[0]</p>
+<p>&#x20;               else:</p>
+<p>&#x20;                   game["original_price"]=price[0]</p>
+<p>&#x20;                   game["price"]=price[0]</p>
+<p>&#x20;               return game</p>
+<p>&#x20;       logging.error('get invalid status code%s while scraping %s',response.status_code, url)</p>
+<p>&#x20;   except requests.RequestException:</p>
+<p>&#x20;       logging.error('error occurred while scraping %s',url,exc_info=True)</p>
+<h2>获取链接与数据写入部分：</h2>
+<p>for n in range(10,100):</p>
+<p>&#x20;   number = str(n).zfill(7)</p>
+<p>&#x20;   url = f'https://store.steampowered.com/app/{number}'</p>
+<p>&#x20;   game = scrape_game(url)</p>
+<p>&#x20;   if game and game.get("name"):</p>
+<p>&#x20;       collection.update_one(</p>
+<p>&#x20;           {"name":game["name"]},</p>
+<p>&#x20;           {"$set":game},</p>
+<p>&#x20;           upsert=True</p>
+<p>&#x20;       )</p>
+<h3>关于logging</h3>
+<p>这是gou第一次尝试用logging模块，相对于print，它的优势在于：</p>
+<ul>
+<li>自动记录时间</li>
+<li>区分日志等级</li>
+<li>更适合调试</li>
+</ul>
+<h3>关于价格判断</h3>
+<p>为什么要加个 if o_price？</p>
+<p>因为gou发现没打折的游戏是没有discount_original_price这一属性的。</p>
+<p>如果不加判断，就会在爬取到原价游戏时报错。</p>
+<h3>关于链接结构</h3>
+<p>gou注意到，steam游戏的链接由固定前缀+7位数字组成，所以他用了遍历和zfill()方法，用于批量生成链接。</p>
+<h3>关于update_one</h3>
+<p>其实gou最开始用的是insert_one，但他马上发现这会产生一个bug——insert不会去重，所以数据库会有很多同名游戏，</p>
+<p>于是他改用了update_one方法，利用游戏名查重，每次运行程序新数据都会覆盖旧的。</p>
+<h2><strong>未来计划：</strong></h2>
+<p>数据库雏形完成，gou在GouNest中的第二篇博文末尾进一步指明了steam游戏数据库的前进方向：</p>
+<p>牢牢把握"<strong>三个字段</strong>"，"<strong>两个功能</strong>"！</p>
+<p><strong>三个字段：</strong> </p>
+<ul>
+<li>好评率字段</li>
+<li>好评数量字段</li>
+<li>游戏tag字段</li>
+</ul>
+<p><strong>两个功能：</strong> </p>
+<ul>
+<li>查询游戏数据功能 </li>
+<li>筛选游戏数据功能</li>
+</ul>
+<p>2026年03月30日</p>
+        </p>
+        <hr>
+        <p>
+            <a href="../index.html"style="color:red;">返回主頁👈</a>
+        </p>
+    </body>
+</html>
