@@ -37,7 +37,7 @@ for content in contents.iterdir():
 
 blog_list = ""
 for blog_content in blog.iterdir():
-    blog_list += f'<p><a href="{blog_content}">{blog_content.stem}</a></p>\n'
+    blog_list += f'<a href="{blog_content}">{blog_content.stem}</a><br>'
 
 home_content = h_t_content.replace("{blog_list}",blog_list)
 home.write_text(home_content,encoding="utf-8")
