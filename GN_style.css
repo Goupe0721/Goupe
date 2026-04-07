@@ -1,11 +1,15 @@
 @font-face{
     font-family:"Noto Sans";
-    src: url("fonts/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf") format("ttf");
+    src: url("fonts/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf") format("truetype");
 }
 @font-face{
     font-family:"Noto Sans";
-    src: url("fonts/Noto_Sans_SC/NotoSansSC-VariableFont_wght.ttf") format("ttf");
+    src: url("fonts/Noto_Sans_SC/NotoSansSC-VariableFont_wght.ttf") format("truetype");
     unicode-range: U+4E00-9FFF;
+}
+@font-face{
+    font-family:"pixel";
+    src: url("fonts/Press-Start-2P/PressStart2P-1.ttf") format("truetype");
 }
 .container{
     max-width: 1000px;
@@ -69,11 +73,21 @@ a{
     color: var(--subtext);
 }
 .title{
-    font-size: 60px;
+    font-size: 90px;
+    font-weight: 800;
     color: var(--accent);
+
     margin-top: 20px;
     line-height: 1.6;
-    text-shadow:
-    4px 4px 0 #000,
-    8px 8px 0 #000;
+
+    font-family: "pixel",sans-serif;
+    background: repeating-linear-gradient(
+        0deg,
+        var(--accent),
+        var(--accent) 15px,
+        var(--bg) 15px,
+        var(--bg) 19px
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
