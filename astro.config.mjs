@@ -10,7 +10,7 @@ import remarkFigureCaption from '@microflash/remark-figure-caption';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://goupe0721.github.io',
-  base: '/Goupe',
+  base: '/',
 
   integrations: [mdx(), sitemap()],
 
